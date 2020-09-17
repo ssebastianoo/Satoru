@@ -46,13 +46,13 @@ def push_():
     os.system('git push origin master')
 
 class Git:
-    def __init__(self):
-        pass
+    def __init__(self, loop):
+        self.loop = loop
 
-    async def pull(self, loop):
+    async def pull(self):
         function = functools.partial(pull_)
-        await loop.run_in_executor(None, function)
+        await self.loop.run_in_executor(None, function)
 
-    async def push(self, loop):
+    async def push(self):
         function = functools.partial(push_)
-        await loop.run_in_executor(None, function)
+        await self.loop.run_in_executor(None, function)

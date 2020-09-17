@@ -1,25 +1,17 @@
-import discord
-from discord.ext import commands
-import asyncio
-import os
-import json
+import discord, aiosqlite, asyncio, os, json, traceback, io, sys, copy, aiohttp, subprocess, textwrap, aiosqlite
+from discord.ext import commands, tasks
 from datetime import datetime
-import traceback
-import textwrap
-import io
 from contextlib import redirect_stdout
-import sys
-import copy
-import subprocess
 from utils import Git
+from typing import Union
 
 colour = 0xbf794b
+#git = Git(self.bot.loop)
 
 class Owner(commands.Cog, command_attrs = dict(hidden = True)):
 
   def __init__(self, bot):
     self.bot = bot
-    self.git = Git()
     self._last_result = None
 
   def cleanup_code(self, content):
@@ -69,7 +61,7 @@ class Owner(commands.Cog, command_attrs = dict(hidden = True)):
     "reload a cog"
 
     async with ctx.typing():
-      await self.git.pull(self.bot.loop)
+      #await git.pull()
 
       if not extension:
         emb = discord.Embed(description = f"<a:loading:747680523459231834> | Reloading all extensions", colour = self.bot.colour)
@@ -220,6 +212,75 @@ class Owner(commands.Cog, command_attrs = dict(hidden = True)):
     await ctx.message.add_reaction("👋")
     subprocess.call("python3 main.py", shell = True)
     self.bot.close()
+
+  @commands.group(invoke_without_command = True, aliases = ["sql"])
+  @commands.is_owner()
+  async def sqlite(self, ctx, *, command):
+    "run a sqlite command"
+
+    command = eval(f"f'{command}'")
+    
+    async with aiosqlite.connect("data/db.db") as db:
+        data = await db.execute(command)
+
+        if command.lower().startswith("select"):
+            data = await data.fetchall()
+            emb = discord.Embed(description = f"```py\n{data}\n```", colour = self.bot.colour)
+            await ctx.send(embed = emb)
+
+        await db.commit()
+
+    await ctx.message.add_reaction("<a:check:726040431539912744>")
+
+  @commands.command(aliases = ["bl"])
+  @commands.is_owner()
+  async def blacklist(self, ctx, member: Union[discord.Member, discord.User] = None):
+    "blacklist a user"
+
+    async with ctx.typing():
+      async with aiosqlite.connect("data/db.db") as db:
+        if member:
+          await db.execute(f"INSERT into blacklist (user) VALUES ({member.id})")
+          await db.commit()
+
+        else:
+          data = await db.execute(f"SELECT * from blacklist")
+          data = await data.fetchall()
+
+          emb = discord.Embed(description = f"These users are blacklisted:\n", colour = self.bot.colour)
+          
+          for user in data:
+
+            if int(user[0]) == 0:
+              pass
+
+            else:
+              u = self.bot.get_user(int(user[0]))
+              if not u:
+                emb.description += f"• **{user[0]}** (I cannot see this user)\n"
+
+              else:
+                emb.description += f"• **{u}**\n"
+
+          return await ctx.send(embed = emb)
+
+      emb = discord.Embed(description = f"<a:check:726040431539912744> | Blacklisted **{member}**", colour = self.bot.colour)
+      await ctx.send(embed = emb)
+      await ctx.message.add_reaction("<a:check:726040431539912744>")
+
+  @commands.command(aliases = ["ubl"])
+  @commands.is_owner()
+  async def unblacklist(self, ctx, member: Union[discord.Member, discord.User] = None):
+    "blacklist a user"
+
+    async with ctx.typing():
+      async with aiosqlite.connect("data/db.db") as db:
+          await db.execute(f"UPDATE blacklist set user = 0 where user = {member.id}")
+          await db.commit()
+
+      emb = discord.Embed(description = f"<a:check:726040431539912744> | Unblacklisted **{member}**", colour = self.bot.colour)
+      await ctx.send(embed = emb)
+      await ctx.message.add_reaction("<a:check:726040431539912744>")
       
 def setup(bot):
   bot.add_cog(Owner(bot))

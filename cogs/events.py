@@ -1,8 +1,6 @@
-import discord
+import discord, aiosqlite, aiohttp, json
 from discord.ext import commands
 from discord import Webhook, AsyncWebhookAdapter
-import aiohttp
-import json
 from datetime import datetime
 
 colour = 0xbf794b
@@ -11,6 +9,20 @@ class Events(commands.Cog):
 
   def __init__(self, bot):
     self.bot = bot
+    self.bot.add_check(self.blacklist)
+
+  async def blacklist(self, ctx):
+    async with aiosqlite.connect("data/db.db") as db:
+      data = await db.execute(f"SELECT * from blacklist where user = {ctx.author.id}")
+      data = await data.fetchall()
+
+      if len(data) == 1:
+        emb = discord.Embed(description = f"<a:fail:727212831782731796> | {ctx.author.mention} you can't use the bot because you are blacklisted!", colour = self.bot.colour)
+        await ctx.send(embed = emb, delete_after = 5)
+        return False
+
+      else:
+        return True
   
   @commands.Cog.listener()
   async def on_guild_join(self, guild):
@@ -67,12 +79,61 @@ class Events(commands.Cog):
       await channel.send(f"<:leave:694103681272119346> {member.mention} ({member}) left...")
 
   @commands.Cog.listener()
+  async def on_message(self, message):
+
+    if not message.guild:
+      if message.author == self.bot.user:
+        return
+
+      async with message.channel.typing():
+        message_ = message.content.replace(" ", "%20").replace("!", "%21").replace('"', "%22").replace("#", "%23").replace('$', "%24").replace('%', "%25").replace('&', "%26").replace("'",  "%27")
+        async with aiohttp.ClientSession() as cs:
+          r = await cs.get(f"https://some-random-api.ml/chatbot?message={message_}")
+          r = await r.json()
+          
+        await cs.close()
+        emb = discord.Embed(description = r["response"], colour = self.bot.colour)
+        return await message.channel.send(embed = emb)
+
+    #await self.bot.process_commands(message)
+  
+  @commands.Cog.listener()
   async def on_message_edit(self, after, before):
 
     if before.author == self.bot.user:
       return 
       
     await self.bot.process_commands(before)
+  
+  @commands.Cog.listener()
+  async def on_command_error(self, ctx, error):
+
+    emb = discord.Embed(description = f"<:bahrooscreaming:676018783332073472> • **{ctx.author}** error!\n<a:fail:727212831782731796> • {error}\n<:notlikeduck:701504231269597214> • Join the [support server](https://discord.gg/w8cbssP) for more help", colour = self.bot.colour)
+    if isinstance(error, commands.CommandNotFound):
+      return
+
+    elif isinstance(error, commands.CheckFailure):
+      return
+
+    if isinstance(error, commands.MissingPermissions):
+      if ctx.author.id == 488398758812319745:
+        return await ctx.reinvoke()
+
+      else:
+        pass
+
+    if isinstance(error, commands.CommandOnCooldown):
+      if ctx.author.id == 488398758812319745:
+        return await ctx.reinvoke()
+
+      else:
+        return await ctx.send(embed = emb, delete_after = 5)
+
+    if isinstance(error, commands.MaxConcurrencyReached):
+      emb = discord.Embed(description = f"```sh\n{error}\n```\nJoin the [support server](https://discord.gg/w8cbssP) for help.", colour = discord.Colour.red())
+      return await ctx.send(embed = emb, delete_after = 3)
+
+    await ctx.send(embed = emb)
 
 def setup(bot):
   bot.add_cog(Events(bot))

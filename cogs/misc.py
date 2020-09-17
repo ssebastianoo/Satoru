@@ -678,30 +678,6 @@ Amsterdam  ::   {amsterdam}
       await ctx.send(b["owo"])
 
     @commands.command()
-    async def mention(self, ctx, member: discord.Member = None, channel: discord.TextChannel = None):
-      "See who pinged / mentioned a member"
-      message = None
-      async with ctx.typing():
-        member = member or ctx.author
-        channel = channel or ctx.channel
-        async for a in channel.history(limit=5000):
-          if a.id == ctx.message.id:
-            pass
-          else:
-            if member.mention in a.content:
-              message = a
-              break
-
-        if not message:
-          emb = discord.Embed(description = f"<:redTick:596576672149667840> | Last mention is too old or {member.mention} got never mentioned and I can't find it!", colour = discord.Colour.red())
-          return await ctx.send(embed = emb, delete_after = 10)
-
-        emb = discord.Embed(description = f"{message.content}\n\n[[Jump]({message.jump_url})]", timestamp = message.created_at, colour = message.author.colour)
-        emb.set_author(name = message.author, icon_url = message.author.avatar_url_as(static_format = "png"))
-
-        await ctx.send(embed = emb)
-
-    @commands.command()
     async def binary(self , ctx, *, text):
 
       text = discord.utils.escape_markdown(text)

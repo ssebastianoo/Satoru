@@ -1,9 +1,8 @@
-import discord
+import discord, requests, aiohttp
 from discord.ext import commands
-import requests
 from discord import Webhook, RequestsWebhookAdapter
 
-class DBI(commands.Cog):
+class DBI(commands.Cog, command_attrs = dict(hidden = True)):
 
     def __init__(self, bot):
         self.bot = bot
@@ -74,6 +73,15 @@ class DBI(commands.Cog):
             else:
                 await message.delete()
 
+        elif message.channel.id == 611325092269522944:
+            if message.attachments:
+                await message.add_reaction("👍")
+                await message.add_reaction("👎")
+
+            elif message.embeds:
+                await message.add_reaction("👍")
+                await message.add_reaction("👎")
+
     @commands.Cog.listener()
     async def on_raw_message_edit(self, payload):
         channel = self.bot.get_channel(payload.channel_id)
@@ -81,6 +89,30 @@ class DBI(commands.Cog):
 
         if channel.id == 743117154932621452:
             if message.id == channel.last_message.id:
+                await message.delete()
+
+        elif message.channel.id == 611325092269522944:
+            if message.attachments:
+                await message.add_reaction("👍")
+                await message.add_reaction("👎")
+
+            elif message.embeds:
+                await message.add_reaction("👍")
+                await message.add_reaction("👎")
+
+    @commands.Cog.listener()
+    async def on_raw_reaction_add(self, payload):
+        channel = self.bot.get_channel(payload.channel_id)
+        message = await channel.fetch_message(payload.message_id)
+
+        if message.channel.id == 611325092269522944:
+            ups = discord.utils.get(message.reactions, emoji = "👍")
+            downs = discord.utils.get(message.reactions, emoji = "👎")
+
+            if ups.count >= downs.count:
+                return
+
+            elif downs.count > ups.count and downs.count > 4:
                 await message.delete()
 
 def setup(bot):

@@ -47,31 +47,6 @@ async def on_ready():
 
   await bot.change_presence(status = discord.Status.idle, activity = discord.Streaming(name = "e?help", url = "https://www.youtube.com/watch?v=dQw4w9WgXcQ"))
 
-@bot.event
-async def on_command_error(ctx, error):
-
-  emb = discord.Embed(title = "Error", description = f"```css\n{error}\n```\nJoin the [support server](https://discord.gg/w8cbssP) for help.", colour = discord.Colour.red(), timestamp = ctx.message.created_at)
-  emb.set_footer(text = ctx.author, icon_url = ctx.author.avatar_url)
-
-  if isinstance(error, commands.CommandNotFound):
-    return
-
-  if isinstance(error, commands.MissingPermissions):
-    if ctx.author.id == 488398758812319745:
-      return await ctx.reinvoke()
-
-  if isinstance(error, commands.CommandOnCooldown):
-    if ctx.author.id == 488398758812319745:
-      return await ctx.reinvoke()
-
-    else:
-      return await ctx.send(embed = emb, delete_after = 5)
-
-  if isinstance(error, commands.MaxConcurrencyReached):
-    emb = discord.Embed(description = f"```sh\n{error}\n```\nJoin the [support server](https://discord.gg/w8cbssP) for help.", colour = discord.Colour.red())
-    return await ctx.send(embed = emb, delete_after = 3)
-  await ctx.send(embed = emb)
-
 for filename in os.listdir('./cogs'):
   if filename.endswith('.py'):
     bot.load_extension(f'cogs.{filename[:-3]}')
