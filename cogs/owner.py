@@ -6,13 +6,13 @@ from utils import Git
 from typing import Union
 
 colour = 0xbf794b
-#git = Git(self.bot.loop)
 
 class Owner(commands.Cog, command_attrs = dict(hidden = True)):
 
   def __init__(self, bot):
     self.bot = bot
     self._last_result = None
+    self.git = Git()
 
   def cleanup_code(self, content):
         """Automatically removes code blocks from the code."""
@@ -61,7 +61,7 @@ class Owner(commands.Cog, command_attrs = dict(hidden = True)):
     "reload a cog"
 
     async with ctx.typing():
-      #await git.pull()
+      await self.git.pull(self.bot.loop)
 
       if not extension:
         emb = discord.Embed(description = f"<a:loading:747680523459231834> | Reloading all extensions", colour = self.bot.colour)
