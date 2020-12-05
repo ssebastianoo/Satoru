@@ -1,3 +1,3 @@
 class tokens:
-    bot = "Bot Token"
-    dbl = "top.gg Token"
+    bot = "NjM1MDQ0ODM2ODMwODcxNTYy.XarVlw._2nBGlndg958t8Njt_hRwiOWD0Q"
+    dbl = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYzNTA0NDgzNjgzMDg3MTU2MiIsImJvdCI6dHJ1ZSwiaWF0IjoxNjA3MTYyODAyfQ.HFbzFpkbVHZEjpOqNIW-nLXiK8rvmTTlBbyNG7cmxT0"
