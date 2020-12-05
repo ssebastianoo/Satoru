@@ -1,3 +1,4 @@
+import os
 from discord.ext import commands 
 
 class Bot(commands.Bot):
@@ -6,3 +7,7 @@ class Bot(commands.Bot):
 
     async def on_ready(self):
         print("ready as", self.user)
+
+        #for cog in os.listdir("./cogs"):
+         #   if cog.endswith(".py"):
+          #      self.load_extension(cog[:-3])
