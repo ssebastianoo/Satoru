@@ -1,3 +1,0 @@
-class tokens:
-    bot = ""
-    dbl = ""
