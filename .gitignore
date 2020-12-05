@@ -2,3 +2,4 @@ __pycache__/
 cogs/__pycache__/
 ext/__pycache__/
 config.py
+start.sh

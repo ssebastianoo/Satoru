@@ -1,6 +1,5 @@
 import discord, requests, aiohttp, asyncio
 from discord.ext import commands
-from discord import Webhook, RequestsWebhookAdapter
 
 class DBI(commands.Cog, command_attrs = dict(hidden = True)):
 
@@ -64,10 +63,6 @@ class DBI(commands.Cog, command_attrs = dict(hidden = True)):
                 await ctx.send(f"**{message.author}** https://discord.gg/{invite.code}")
 
         elif message.channel.id == 743117154932621452:
-
-            async with aiohttp.ClientSession() as session:
-                webhook = Webhook.from_url('url-here', adapter=AsyncWebhookAdapter(session))
-                await webhook.send('Hello World', username='Foo')
 
             try: 
                 actual = int(message.content)
