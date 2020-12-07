@@ -14,7 +14,8 @@ class Owner(commands.Cog, command_attrs=dict(hidden=True)):
 
         return content.strip('` \n')
 
-    @commands.command(pass_context=True, hidden=True, name='eval')
+    @commands.command(hidden=True, name='eval')
+    @commands.is_owner()
     async def _eval(self, ctx, *, body: str):
         """Evaluates a code"""
 
