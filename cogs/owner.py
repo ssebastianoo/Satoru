@@ -5,6 +5,7 @@ from contextlib import redirect_stdout
 class Owner(commands.Cog, command_attrs=dict(hidden=True)):
     def __init__(self, bot):
         self.bot = bot
+        self._last_result = None
 
     def cleanup_code(self, content):
         """Automatically removes code blocks from the code."""
