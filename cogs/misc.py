@@ -121,8 +121,9 @@ class Misc(commands.Cog):
         await cs.close()
 
         memes = memes["data"]["children"]
-        memes = [memes[post]["data"] for post in memes if not memes[post]["data"]["is_self"]]
-        meme = random.choice(memes)
+        memes = [post for post in memes if not memes[post]["data"]["is_self"]]
+        print(memes)
+        """meme = random.choice(memes)
 
         url = meme["url_overridden_by_dest"]
         author = "u/" + meme["author"]
@@ -132,7 +133,7 @@ class Misc(commands.Cog):
         link = "https://reddit.com" + meme["permalink"]
 
         emb = discord.Embed(title=title,url=link, description = f"**{ups}** Upvotes", colour = self.bot.colour).set_image(url)
-        await ctx.send(embed = emb)
+        await ctx.send(embed = emb)"""
 
 def setup(bot):
     bot.add_cog(Misc(bot))
