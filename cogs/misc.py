@@ -107,14 +107,14 @@ class Misc(commands.Cog):
         emb.description = f"GG! I won in **{count}** tries!"
         await msg.edit(content = None, embed = emb)
 
-    @commands.commands()
+    @commands.command()
     async def meme(self, ctx):
         "memes."
 
         subreddit = random.choice(["memes", "dankmemes", "kidsarefuckingstupid", "me_irl", "BikiniBottomTwitter"])
         headers = {"user-agent": "satoru discord bot"
         }
-        
+
         async with aiohttp.ClientSession() as cs:
             res = await cs.get(f"https://reddit.com/r/{subreddit}/hot.json", headers=headers)
             memes = await res.json()
