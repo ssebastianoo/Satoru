@@ -111,28 +111,29 @@ class Misc(commands.Cog):
     async def meme(self, ctx):
         "memes."
 
-        subreddit = random.choice(["memes", "dankmemes", "kidsarefuckingstupid", "me_irl", "BikiniBottomTwitter"])
-        headers = {"user-agent": "satoru discord bot"
-        }
+        async with ctx.typing():
+            subreddit = random.choice(["memes", "dankmemes", "kidsarefuckingstupid", "me_irl", "BikiniBottomTwitter"])
+            headers = {"user-agent": "satoru discord bot"
+            }
 
-        async with aiohttp.ClientSession() as cs:
-            res = await cs.get(f"https://reddit.com/r/{subreddit}/hot.json", headers=headers)
-            memes = await res.json()
-        await cs.close()
+            async with aiohttp.ClientSession() as cs:
+                res = await cs.get(f"https://reddit.com/r/{subreddit}/hot.json", headers=headers)
+                memes = await res.json()
+            await cs.close()
 
-        memes = memes["data"]["children"]
-        memes = [post["data"] for post in memes if not post["data"]["is_self"] and ".png" in post["data"]["url_overridden_by_dest"] or ".jpg" in post["data"]["url_overridden_by_dest"] or ".gif" in post["data"]["url_overridden_by_dest"] or ".jpeg" in post["data"]["url_overridden_by_dest"]]
-        meme = random.choice(memes)
+            memes = memes["data"]["children"]
+            memes = [post["data"] for post in memes if not post["data"]["is_self"] and ".png" in post["data"]["url_overridden_by_dest"] or ".jpg" in post["data"]["url_overridden_by_dest"] or ".gif" in post["data"]["url_overridden_by_dest"] or ".jpeg" in post["data"]["url_overridden_by_dest"]]
+            meme = random.choice(memes)
 
-        url = meme["url_overridden_by_dest"]
-        author = "u/" + meme["author"]
-        subreddit = "r/" + meme["subreddit"]
-        ups = meme["ups"]
-        title = meme["title"]
-        link = "https://reddit.com" + meme["permalink"]
+            url = meme["url_overridden_by_dest"]
+            author = "u/" + meme["author"]
+            subreddit = "r/" + meme["subreddit"]
+            ups = meme["ups"]
+            title = meme["title"]
+            link = "https://reddit.com" + meme["permalink"]
 
-        emb = discord.Embed(title=title,url=link, description = f"**{ups}** Upvotes", colour = self.bot.colour).set_image(url=url)
-        await ctx.send(embed = emb)
+            emb = discord.Embed(title=title,url=link, description = f"**{ups}** Upvotes", colour = self.bot.colour).set_image(url=url).set_author(name=author).set_footer(text=subreddit)
+            await ctx.send(embed = emb)
 
 def setup(bot):
     bot.add_cog(Misc(bot))
