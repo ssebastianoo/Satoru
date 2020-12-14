@@ -121,7 +121,7 @@ class Misc(commands.Cog):
         await cs.close()
 
         memes = memes["data"]["children"]
-        memes = [post["data"] for post in memes if not post["data"]["is_self"]]
+        memes = [post["data"] for post in memes if not post["data"]["is_self"] and ".png" in post["data"]["url_overridden_by_dest"] or ".jpg" in post["data"]["url_overridden_by_dest"] or ".gif" in post["data"]["url_overridden_by_dest"] or ".jpeg" in post["data"]["url_overridden_by_dest"]]
         meme = random.choice(memes)
 
         url = meme["url_overridden_by_dest"]
