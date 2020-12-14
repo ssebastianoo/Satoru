@@ -131,7 +131,7 @@ class Misc(commands.Cog):
         title = meme["title"]
         link = "https://reddit.com" + meme["permalink"]
 
-        emb = discord.Embed(title=title,url=link, description = f"**{ups}** Upvotes", colour = self.bot.colour).set_image(url)
+        emb = discord.Embed(title=title,url=link, description = f"**{ups}** Upvotes", colour = self.bot.colour).set_image(url=url)
         await ctx.send(embed = emb)
 
 def setup(bot):
