@@ -1,7 +1,7 @@
-import discord 
+import discord, aiohttp, random
 from discord.ext import commands
 
-class GuessGame(commands.Cog):
+class Misc(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
@@ -107,5 +107,32 @@ class GuessGame(commands.Cog):
         emb.description = f"GG! I won in **{count}** tries!"
         await msg.edit(content = None, embed = emb)
 
+    @commands.commands()
+    async def meme(self, ctx):
+        "memes."
+
+        subreddit = random.choice(["memes", "dankmemes", "kidsarefuckingstupid", "me_irl", "BikiniBottomTwitter"])
+        headers = {"user-agent": "satoru discord bot"
+        }
+        
+        async with aiohttp.ClientSession() as cs:
+            res = await cs.get(f"https://reddit.com/r/{subreddit}/hot.json", headers=headers)
+            memes = await res.json()
+        await cs.close()
+
+        memes = memes["data"]["children"]
+        memes = [memes[post]["data"] for post in memes if not memes[post]["data"]["is_self"]]
+        meme = random.choice(memes)
+
+        url = meme["url_overridden_by_dest"]
+        author = "u/" + meme["author"]
+        subreddit = "r/" + meme["subreddit"]
+        ups = meme["ups"]
+        title = meme["title"]
+        link = "https://reddit.com" + meme["permalink"]
+
+        emb = discord.Embed(title=title,url=link, description = f"**{ups}** Upvotes", colour = self.bot.colour).set_image(url)
+        await ctx.send(embed = emb)
+
 def setup(bot):
-    bot.add_cog(GuessGame(bot))
+    bot.add_cog(Misc(bot))
