@@ -121,7 +121,8 @@ class Misc(commands.Cog):
         await cs.close()
 
         memes = memes["data"]["children"]
-        memes = [post for post in memes if not memes[post]["data"]["is_self"]]
+        # memes = [post for post in memes if not memes[post]["data"]["is_self"]]
+        print([post for post in memes])
         print(memes)
         """meme = random.choice(memes)
 
