@@ -12,4 +12,5 @@ class Bot(commands.Bot):
                 self.load_extension(f"cogs.{cog[:-3]}")
 
     async def on_ready(self):
+        await self.change_presence(status=discord.Status.idle, activity=discord.Activity(type=discord.ActivityType.watching, name="memes"))
         print("ready as", self.user)
