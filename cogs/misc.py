@@ -1,4 +1,4 @@
-import discord, aiohttp, random
+import discord, aiohttp, random, io
 from discord.ext import commands
 
 class Misc(commands.Cog):
@@ -144,7 +144,7 @@ class Misc(commands.Cog):
         if ctx.message.attachments:
             image = ctx.message.attachments[0]
             b = await image.read()
-            file = discord.File(fp=b, filename=image.filename)
+            file = discord.File(fp=io.BytesIO(b), filename=image.filename)
 
         else:
             if not message:
