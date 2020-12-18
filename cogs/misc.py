@@ -136,5 +136,23 @@ class Misc(commands.Cog):
             emb = discord.Embed(title=title,url=link, description = f"**{ups}** Upvotes", colour = self.bot.colour).set_image(url=url).set_author(name=author).set_footer(text=subreddit)
             await ctx.send(embed = emb)
 
+    @commands.command()
+    async def say(self, ctx, *, message=None):
+        "speak using the bot"
+
+        file = None
+        if ctx.message.attachments:
+            image = ctx.message.attachments[0]
+            b = await image.read()
+            file = discord.File(fp=b, filename=image.filename)
+
+        else:
+            if not message:
+                emb = discord.Embed(description = f"❌ Pls specify a message or a file", colour = self.bot.colour)
+                return await ctx.send(embed = emb)
+
+        escape = discord.AllowedMentions(everyone=False, roles=False, users=False)
+        await ctx.send(content=message, file=file, allowed_mentions=escape)
+
 def setup(bot):
     bot.add_cog(Misc(bot))
