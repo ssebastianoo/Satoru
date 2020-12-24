@@ -1,6 +1,6 @@
 import discord, requests, aiohttp, asyncio, random
 from discord.ext import commands
-from ext.checks import *
+import ext.checks as check
 
 class DBI(commands.Cog, command_attrs = dict(hidden = True)):
 
@@ -128,7 +128,7 @@ class DBI(commands.Cog, command_attrs = dict(hidden = True)):
                 await self.bot.cursor.execute("UPDATE trees set trees = ? where user = ?", (trees, winner))
 
     @commands.command(aliases=["alberi", "tree", "points", "punti"])
-    @is_dbi()
+    @check.is_dbi()
     async def trees(self, ctx, *, member: discord.Member = None):
         "Quanti alberi hai?"
 
