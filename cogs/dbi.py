@@ -180,9 +180,9 @@ class DBI(commands.Cog, command_attrs = dict(hidden = True)):
             for user_id in stats:
                 if count > 10:
                     break
-
-                user = await self.bot.fetch_user(user_id)
-                if not user:
+                try:
+                    user = await self.bot.fetch_user(user_id)
+                except:
                     pass
                 else:
                     emb.description += f"`{count}.` **{str(user)}** `{stats_[user.id]}`🎄\n"
