@@ -183,7 +183,7 @@ class DBI(commands.Cog, command_attrs = dict(hidden = True)):
                 try:
                     user = await self.bot.fetch_user(user_id)
                 except Exception as e:
-                    print(user)
+                    print(e)
                     user = None
 
                 if user:
@@ -194,7 +194,11 @@ class DBI(commands.Cog, command_attrs = dict(hidden = True)):
     @commands.Cog.listener()
     async def on_raw_message_edit(self, payload):
         channel = self.bot.get_channel(payload.channel_id)
-        message = await channel.fetch_message(payload.message_id)
+
+        try:
+            message = await channel.fetch_message(payload.message_id)
+        except:
+            return
 
         if channel.id == 743117154932621452:
             if message.id == channel.last_message.id:
