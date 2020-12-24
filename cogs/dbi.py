@@ -168,19 +168,19 @@ class DBI(commands.Cog, command_attrs = dict(hidden = True)):
             data = await self.bot.cursor.execute("SELECT * FROM trees")
             data = await data.fetchall()
 
-            stats = {}
+            stats_ = {}
 
             for element in data:
-                stats[int(element[0])] = int(element[1])
+                stats_[int(element[0])] = int(element[1])
 
-            stats = sorted(stats, key=lambda x: stats[x], reverse=True)
+            stats = sorted(stats_, key=lambda x: stats_[x], reverse=True)
             emb = discord.Embed(title="Leaderboard", description = "", colour = self.bot.colour)
             
             count = 1
             for user_id in stats:
                 if count > 10:
                     break
-                
+
                 user = await self.bot.fetch_user(user_id)
                 if not user:
                     pass
