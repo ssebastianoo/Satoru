@@ -131,6 +131,7 @@ class DBI(commands.Cog, command_attrs = dict(hidden = True)):
                 trees = int(data[0][1]) + 1
                 await self.bot.cursor.execute("UPDATE trees set trees = ? where user = ?", (trees, winner))
 
+            await self.bot.connection.commit()
             await message.clear_reaction(emoji)
 
     @commands.command(aliases=["alberi", "tree", "points", "punti"])
