@@ -127,11 +127,6 @@ class DBI(commands.Cog, command_attrs = dict(hidden = True)):
                 trees = int(data[0][1]) + 1
                 await self.bot.cursor.execute("UPDATE trees set trees = ? where user = ?", (trees, winner))
 
-    def is_dbi(self):
-        async def predicate(self, ctx):
-            return ctx.guild.id == 611322575674671107
-        return commands.check(predicate)
-    
     @commands.command(aliases=["alberi", "tree", "points", "punti"])
     @is_dbi()
     async def trees(self, ctx, *, member: discord.Member = None):
