@@ -100,7 +100,7 @@ class DBI(commands.Cog, command_attrs = dict(hidden = True)):
                 await message.add_reaction("👎")
 
         else:
-            if message.guild.id != 611322575674671107:
+            if message.guild.id != 611322575674671107 or message.author.bot:
                 return
 
             await self.bot.wait_until_ready()
@@ -185,7 +185,7 @@ class DBI(commands.Cog, command_attrs = dict(hidden = True)):
                 if not user:
                     pass
                 else:
-                    emb.description += f"`{count}.` **{str(user)}** `{stats[user.id]}`🎄\n"
+                    emb.description += f"`{count}.` **{str(user)}** `{stats_[user.id]}`🎄\n"
                     count += 1
             await ctx.send(embed = emb)
     
