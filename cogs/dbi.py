@@ -182,7 +182,8 @@ class DBI(commands.Cog, command_attrs = dict(hidden = True)):
                     break
                 try:
                     user = await self.bot.fetch_user(user_id)
-                except:
+                except Exception as e:
+                    print(user)
                     user = None
 
                 if user:
