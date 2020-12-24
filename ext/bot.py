@@ -1,5 +1,5 @@
-import discord, os
-from discord.ext import commands, aiosqlite
+import discord, os, aiosqlite
+from discord.ext import commands
 
 class Bot(commands.Bot):
     def __init__(self, command_prefix):
