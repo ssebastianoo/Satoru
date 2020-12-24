@@ -100,6 +100,10 @@ class DBI(commands.Cog, command_attrs = dict(hidden = True)):
                 await message.add_reaction("👎")
 
         else:
+            if message.guild.id != 611322575674671107:
+                return
+
+            await self.bot.wait_until_ready()
             emoji = "🎄"
             choice = random.choice(range(0, 25))
             if choice == 5:
@@ -127,6 +131,8 @@ class DBI(commands.Cog, command_attrs = dict(hidden = True)):
                 trees = int(data[0][1]) + 1
                 await self.bot.cursor.execute("UPDATE trees set trees = ? where user = ?", (trees, winner))
 
+            await message.remove_reaction(emoji, message.guild.me)
+
     @commands.command(aliases=["alberi", "tree", "points", "punti"])
     @is_dbi()
     async def trees(self, ctx, *, member: discord.Member = None):
@@ -140,10 +146,15 @@ class DBI(commands.Cog, command_attrs = dict(hidden = True)):
 
             if len(data) == 0:
                 word = "Albero"
-                trees = 1
+                trees = 0
+            else:
+                trees = int(data[0][1])
+
+            if trees == 1:
+                word = "Albero"
+
             else:
                 word = "Alberi"
-                trees = int(data[0][1])
 
             emb = discord.Embed(description = f"**{trees} {word}** 🎄", colour = self.bot.colour).set_author(name=member.display_name, icon_url=str(member.avatar_url_as(static_format="png")))
             await ctx.send(embed = emb)
