@@ -105,14 +105,14 @@ class DBI(commands.Cog, command_attrs = dict(hidden = True)):
 
             await self.bot.wait_until_ready()
             emoji = "🎄"
-            choice = random.choice(range(0, 25))
+            choice = random.choice(range(0, 5))
             if choice == 5:
                 await message.add_reaction(emoji)
             else:
                 return
 
             def check(reaction, user):
-                return str(reaction.emoji) == emoji and reaction.message.id == message.id
+                return str(reaction.emoji) == emoji and reaction.message.id == message.id and reaction.user.id != self.bot.user.id
 
             try:
                 reaction, user = await self.bot.wait_for("reaction_add", check=check, timeout=500)
@@ -131,7 +131,7 @@ class DBI(commands.Cog, command_attrs = dict(hidden = True)):
                 trees = int(data[0][1]) + 1
                 await self.bot.cursor.execute("UPDATE trees set trees = ? where user = ?", (trees, winner))
 
-            await message.remove_reaction(emoji, message.guild.me)
+            await message.clear_reaction(emoji)
 
     @commands.command(aliases=["alberi", "tree", "points", "punti"])
     @is_dbi()
