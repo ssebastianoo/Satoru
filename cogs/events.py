@@ -6,6 +6,11 @@ class Events(commands.Cog):
 
     @commands.Cog.listener()
     async def on_command_error(self, ctx, error):
+
+        if isinstance(error, commands.CheckFailure):
+            if ctx.command.name == "trees":
+                return
+            
         await ctx.send(f"```{error}```")
     
 def setup(bot):

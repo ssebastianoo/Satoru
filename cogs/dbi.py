@@ -1,4 +1,4 @@
-import discord, requests, aiohttp, asyncio
+import discord, requests, aiohttp, asyncio, random
 from discord.ext import commands
 
 class DBI(commands.Cog, command_attrs = dict(hidden = True)):
@@ -42,7 +42,7 @@ class DBI(commands.Cog, command_attrs = dict(hidden = True)):
             await message.add_reaction("<a:check:726040431539912744>")
             await message.add_reaction("<a:fail:727212831782731796>")
 
-        if message.channel.id == 762752717281558568:
+        elif message.channel.id == 762752717281558568:
             if message.author == self.bot.user:
                 return
 
@@ -97,6 +97,60 @@ class DBI(commands.Cog, command_attrs = dict(hidden = True)):
             elif message.embeds:
                 await message.add_reaction("👍")
                 await message.add_reaction("👎")
+
+        else:
+            emoji = "🎄"
+            choice = random.choice(range(0, 25))
+            if choice == 5:
+                await message.add_reaction(emoji)
+            else:
+                return
+
+            def check(reaction, user):
+                return str(reaction.emoji) == emoji and reaction.message.id == message.id
+
+            try:
+                reaction, user = await self.bot.wait_for("reaction_add", check=check, timeout=500)
+
+            except asyncio.TimeoutError:
+                return await message.remove_reaction(emoji, message.guild.me)
+
+            winner = user.id
+            data = await self.bot.cursor.execute("SELECT * FROM trees where user = ?", (winner,))
+            data = await data.fetchall()
+
+            if len(data) == 0:
+                await self.bot.cursor.execute("INSERT into trees (user, trees) VALUES (?, ?)", (winner, 1))
+
+            else:
+                trees = int(data[0][1]) + 1
+                await self.bot.cursor.execute("UPDATE trees set trees = ? where user = ?", (trees, winner))
+
+    def is_dbi(self):
+        async def predicate(self, ctx):
+            return ctx.guild.id == 611322575674671107
+        return commands.check(predicate)
+    
+    @commands.command(aliases=["alberi", "tree", "points", "punti"])
+    @self.is_dbi()
+    async def trees(self, ctx, *, member: discord.Member = None):
+        "Quanti alberi hai?"
+
+        member = member or ctx.author
+
+        async with ctx.typing():
+            data = await self.bot.cursor.execute("SELECT * FROM trees where user = ?", (member.id,))
+            data = await data.fetchall()
+
+            if len(data) == 0:
+                word = "Albero"
+                trees = 1
+            else:
+                word = "Alberi"
+                trees = int(data[0][1])
+
+            emb = discord.Embed(description = f"**{trees} {word}** 🎄", colour = self.bot.colour).set_author(name=member.display_name, icon_url=str(member.avatar_url_as(static_format="png")))
+            await ctx.send(embed = emb)
 
     @commands.Cog.listener()
     async def on_raw_message_edit(self, payload):
