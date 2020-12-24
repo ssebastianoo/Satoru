@@ -112,7 +112,7 @@ class DBI(commands.Cog, command_attrs = dict(hidden = True)):
                 return
 
             def check(reaction, user):
-                return str(reaction.emoji) == emoji and reaction.message.id == message.id and user.id != self.bot.user.id
+                return str(reaction.emoji) == emoji and reaction.message.id == message.id and not user.bot
 
             try:
                 reaction, user = await self.bot.wait_for("reaction_add", check=check, timeout=500)
