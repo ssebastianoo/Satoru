@@ -1,5 +1,6 @@
 import discord, requests, aiohttp, asyncio, random
 from discord.ext import commands
+from ext.checks import *
 
 class DBI(commands.Cog, command_attrs = dict(hidden = True)):
 
@@ -132,7 +133,7 @@ class DBI(commands.Cog, command_attrs = dict(hidden = True)):
         return commands.check(predicate)
     
     @commands.command(aliases=["alberi", "tree", "points", "punti"])
-    @self.is_dbi()
+    @is_dbi()
     async def trees(self, ctx, *, member: discord.Member = None):
         "Quanti alberi hai?"
 
