@@ -182,11 +182,10 @@ class DBI(commands.Cog, command_attrs = dict(hidden = True)):
                     break
                 try:
                     user = await self.bot.fetch_user(user_id)
-                except:
-                    pass
-                else:
                     emb.description += f"`{count}.` **{str(user)}** `{stats_[user.id]}`🎄\n"
                     count += 1
+                except:
+                    pass
             await ctx.send(embed = emb)
     
     @commands.Cog.listener()
