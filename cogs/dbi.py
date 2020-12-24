@@ -106,7 +106,7 @@ class DBI(commands.Cog, command_attrs = dict(hidden = True)):
             await self.bot.wait_until_ready()
             emoji = "🎄"
             choice = random.choice(range(0, 5))
-            if choice == 5:
+            if choice == 3:
                 await message.add_reaction(emoji)
             else:
                 return
