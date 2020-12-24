@@ -1,5 +1,6 @@
 __pycache__/
 cogs/__pycache__/
 ext/__pycache__/
+data/
 config.py
 start.sh
