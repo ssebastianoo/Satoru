@@ -159,6 +159,36 @@ class DBI(commands.Cog, command_attrs = dict(hidden = True)):
             emb = discord.Embed(description = f"**{trees} {word}** 🎄", colour = self.bot.colour).set_author(name=member.display_name, icon_url=str(member.avatar_url_as(static_format="png")))
             await ctx.send(embed = emb)
 
+    @commands.command(aliases=["lb"])
+    @is_dbi()
+    async def leaderboard(self, ctx):
+        "Chi ha più alberi?"
+
+        async with ctx.typing():
+            data = await self.bot.cursor.execute("SELECT * FROM trees")
+            data = await data.fetchall()
+
+            stats = {}
+
+            for element in data:
+                stats[int(element[0])] = int(element[1])
+
+            stats = sorted(stats, key=lambda x: stats[x], reverse=True)
+            emb = discord.Embed(title="Leaderboard", description = "", colour = self.bot.colour)
+            
+            count = 1
+            for user_id in stats:
+                if count > 10:
+                    break
+                
+                user = await self.bot.fetch_user(user_id)
+                if not user:
+                    pass
+                else:
+                    emb.description += f"`{count}.` **{str(user)}** `{stats[user.id]}`🎄\n"
+                    count += 1
+            await ctx.send(embed = emb)
+    
     @commands.Cog.listener()
     async def on_raw_message_edit(self, payload):
         channel = self.bot.get_channel(payload.channel_id)
