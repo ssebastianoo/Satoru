@@ -121,15 +121,15 @@ class DBI(commands.Cog, command_attrs = dict(hidden = True)):
                 return await message.remove_reaction(emoji, message.guild.me)
 
             winner = user.id
-            data = await self.bot.cursor.execute("SELECT * FROM trees where user = ?", (winner,))
+            data = await self.bot.connection.execute("SELECT * FROM trees where user = ?", (winner,))
             data = await data.fetchall()
 
             if len(data) == 0:
-                await self.bot.cursor.execute("INSERT into trees (user, trees) VALUES (?, ?)", (winner, 1))
+                await self.bot.connection.execute("INSERT into trees (user, trees) VALUES (?, ?)", (winner, 1))
 
             else:
                 trees = int(data[0][1]) + 1
-                await self.bot.cursor.execute("UPDATE trees set trees = ? where user = ?", (trees, winner))
+                await self.bot.connection.execute("UPDATE trees set trees = ? where user = ?", (trees, winner))
 
             await self.bot.connection.commit()
             await message.clear_reaction(emoji)
@@ -142,7 +142,7 @@ class DBI(commands.Cog, command_attrs = dict(hidden = True)):
         member = member or ctx.author
 
         async with ctx.typing():
-            data = await self.bot.cursor.execute("SELECT * FROM trees where user = ?", (member.id,))
+            data = await self.bot.connection.execute("SELECT * FROM trees where user = ?", (member.id,))
             data = await data.fetchall()
 
             if len(data) == 0:
@@ -166,7 +166,7 @@ class DBI(commands.Cog, command_attrs = dict(hidden = True)):
         "Chi ha più alberi?"
 
         async with ctx.typing():
-            data = await self.bot.cursor.execute("SELECT * FROM trees")
+            data = await self.bot.connection.execute("SELECT * FROM trees")
             data = await data.fetchall()
 
             stats_ = {}
