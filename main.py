@@ -6,5 +6,5 @@ os.environ["JISHAKU_NO_UNDERSCORE"] = "True"
 os.environ["JISHAKU_NO_DM_TRACEBACK"] = "True" 
 os.environ["JISHAKU_HIDE"] = "True"
 
-bot = Bot(command_prefix=commands.when_mentioned_or("e?"))
+bot = Bot()
 bot.run(config.tokens.bot)
