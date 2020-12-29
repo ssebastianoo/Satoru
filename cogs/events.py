@@ -10,6 +10,9 @@ class Events(commands.Cog):
         if isinstance(error, commands.CheckFailure):
             if ctx.command.name == "trees":
                 return
+
+        if isinstance(error, commands.CommandNotFound):
+            return
             
         await ctx.send(f"```{error}```")
     
