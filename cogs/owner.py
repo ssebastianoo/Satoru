@@ -1,4 +1,4 @@
-import discord, textwrap, traceback, io
+import discord, textwrap, traceback, io, subprocess
 from discord.ext import commands
 from contextlib import redirect_stdout
 
@@ -62,6 +62,14 @@ class Owner(commands.Cog, command_attrs=dict(hidden=True)):
             else:
                 self._last_result = ret
                 await ctx.send(f'{value}{ret}')
+    
+    @commands.command()
+    @commands.is_owner()
+    async def restart(self, ctx):
+        "restart the bot"
+
+        subprocess.call("python3 main.py", shell=True)
+        await self.bot.close()
 
 def setup(bot):
     bot.add_cog(Owner(bot))
