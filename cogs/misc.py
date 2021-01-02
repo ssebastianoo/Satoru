@@ -156,7 +156,7 @@ class Misc(commands.Cog):
     
     @commands.command()
     async def ping(self, ctx):
-        await ctx.send(round(self.bot.latency * 1000) + "ms")
+        await ctx.send(str(round(self.bot.latency * 1000)) + "ms")
 
 def setup(bot):
     bot.add_cog(Misc(bot))
