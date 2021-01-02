@@ -153,6 +153,10 @@ class Misc(commands.Cog):
 
         escape = discord.AllowedMentions(everyone=False, roles=False, users=False)
         await ctx.send(content=message, file=file, allowed_mentions=escape)
+    
+    @commands.command()
+    async def ping(self, ctx):
+        await ctx.send(round(self.bot.latency * 1000) + "ms")
 
 def setup(bot):
     bot.add_cog(Misc(bot))
