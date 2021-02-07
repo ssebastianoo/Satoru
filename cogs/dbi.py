@@ -59,33 +59,33 @@ class DBI(commands.Cog, command_attrs = dict(hidden = True)):
                     await message.channel.send("not a valid server invite link", delete_after = 5)
                     await asyncio.sleep(5)
                     return await message.delete()
-                
+
                 await message.delete()
                 await ctx.send(f"**{message.author}** https://discord.gg/{invite.code}")
 
         elif message.channel.id == 743117154932621452:
 
-            try: 
+            try:
                 actual = int(message.content)
             except ValueError:
                 return await message.delete()
-        
-            msgs = await message.channel.history(limit = 2).flatten() 
+
+            msgs = await message.channel.history(limit = 2).flatten()
             try:
                 num = int(msgs[1].content)
             except:
                 if actual == 1:
-                    return  
-                else: 
-                    return await message.delete() 
+                    return
+                else:
+                    return await message.delete()
 
             if msgs[1].author.id == message.author.id:
                 return await message.delete()
-            
+
             if actual == num + 1:
                 if actual in [100, 500, 1000, 1500, 5000, 10000]:
                     await message.add_reaction("🎉")
-                return   
+                return
 
             else:
                 await message.delete()
@@ -93,10 +93,12 @@ class DBI(commands.Cog, command_attrs = dict(hidden = True)):
         elif message.channel.id == 611325092269522944:
             if message.attachments:
                 await message.add_reaction("👍")
+                await asyncio.sleep(0.2)
                 await message.add_reaction("👎")
 
             elif message.embeds:
                 await message.add_reaction("👍")
+                await asyncio.sleep(0.2)
                 await message.add_reaction("👎")
 
         else:
@@ -176,7 +178,7 @@ class DBI(commands.Cog, command_attrs = dict(hidden = True)):
 
             stats = sorted(stats_, key=lambda x: stats_[x], reverse=True)
             emb = discord.Embed(title="Leaderboard", description = "", colour = self.bot.colour)
-            
+
             count = 1
             for user_id in stats:
                 if count > 10:
@@ -191,7 +193,7 @@ class DBI(commands.Cog, command_attrs = dict(hidden = True)):
                     emb.description += f"`{count}.` **{str(user)}** `{stats_[user.id]}`🎄\n"
                     count += 1
             await ctx.send(embed = emb)
-    
+
     @commands.Cog.listener()
     async def on_raw_message_edit(self, payload):
         channel = self.bot.get_channel(payload.channel_id)
