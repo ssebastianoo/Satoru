@@ -101,40 +101,43 @@ class DBI(commands.Cog, command_attrs = dict(hidden = True)):
                 await asyncio.sleep(0.2)
                 await message.add_reaction("👎")
 
+
+        elif message.channel.id == 821721720619663390:
+            await message.publish()
+
+        if message.guild.id != 611322575674671107 or message.author.bot:
+            return
+
+        await self.bot.wait_until_ready()
+        emoji = "🎄"
+        choice = random.choice(range(0, 10))
+        if choice == 3:
+            await message.add_reaction(emoji)
         else:
-            if message.guild.id != 611322575674671107 or message.author.bot:
-                return
+            return
 
-            await self.bot.wait_until_ready()
-            emoji = "🎄"
-            choice = random.choice(range(0, 10))
-            if choice == 3:
-                await message.add_reaction(emoji)
-            else:
-                return
+        def check(reaction, user):
+            return str(reaction.emoji) == emoji and reaction.message.id == message.id and not user.bot
 
-            def check(reaction, user):
-                return str(reaction.emoji) == emoji and reaction.message.id == message.id and not user.bot
+        try:
+            reaction, user = await self.bot.wait_for("reaction_add", check=check, timeout=500)
 
-            try:
-                reaction, user = await self.bot.wait_for("reaction_add", check=check, timeout=500)
+        except asyncio.TimeoutError:
+            return await message.remove_reaction(emoji, message.guild.me)
 
-            except asyncio.TimeoutError:
-                return await message.remove_reaction(emoji, message.guild.me)
+        winner = user.id
+        data = await self.bot.connection.execute("SELECT * FROM trees where user = ?", (winner,))
+        data = await data.fetchall()
 
-            winner = user.id
-            data = await self.bot.connection.execute("SELECT * FROM trees where user = ?", (winner,))
-            data = await data.fetchall()
+        if len(data) == 0:
+            await self.bot.connection.execute("INSERT into trees (user, trees) VALUES (?, ?)", (winner, 1))
 
-            if len(data) == 0:
-                await self.bot.connection.execute("INSERT into trees (user, trees) VALUES (?, ?)", (winner, 1))
+        else:
+            trees = int(data[0][1]) + 1
+            await self.bot.connection.execute("UPDATE trees set trees = ? where user = ?", (trees, winner))
 
-            else:
-                trees = int(data[0][1]) + 1
-                await self.bot.connection.execute("UPDATE trees set trees = ? where user = ?", (trees, winner))
-
-            await self.bot.connection.commit()
-            await message.clear_reaction(emoji)
+        await self.bot.connection.commit()
+        await message.clear_reaction(emoji)
 
     @commands.command(aliases=["alberi", "tree", "points", "punti"])
     @is_dbi()
