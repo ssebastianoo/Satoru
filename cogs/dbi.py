@@ -155,7 +155,10 @@ class DBI(commands.Cog, command_attrs = dict(hidden = True)):
             else:
                 trees = int(data[0][1])
 
-            word = "Clown Cup"
+            if trees == 1:
+                word = "Clown Cup"
+            else:
+                word = "Clown Cups"
 
             emb = discord.Embed(description = f"**{trees} {word}** {str(self.bot.get_emoji(829083829523972147))}", colour = self.bot.colour).set_author(name=member.display_name, icon_url=str(member.avatar_url_as(static_format="png")))
             await ctx.send(embed = emb)
