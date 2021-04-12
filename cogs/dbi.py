@@ -109,7 +109,7 @@ class DBI(commands.Cog, command_attrs = dict(hidden = True)):
             return
 
         await self.bot.wait_until_ready()
-        emoji = "🎄"
+        emoji = self.bot.get_emoji(829083829523972147)
         choice = random.choice(range(0, 10))
         if choice == 3:
             await message.add_reaction(emoji)
@@ -139,10 +139,10 @@ class DBI(commands.Cog, command_attrs = dict(hidden = True)):
         await self.bot.connection.commit()
         await message.clear_reaction(emoji)
 
-    @commands.command(aliases=["alberi", "tree", "points", "punti"])
+    @commands.command(aliases=["cup", "trofei", "points", "punti"])
     @is_dbi()
-    async def trees(self, ctx, *, member: discord.Member = None):
-        "Quanti alberi hai?"
+    async def cups(self, ctx, *, member: discord.Member = None):
+        "Quante coppe clown hai?"
 
         member = member or ctx.author
 
@@ -151,24 +151,19 @@ class DBI(commands.Cog, command_attrs = dict(hidden = True)):
             data = await data.fetchall()
 
             if len(data) == 0:
-                word = "Albero"
                 trees = 0
             else:
                 trees = int(data[0][1])
 
-            if trees == 1:
-                word = "Albero"
+            word = "Clown Cup"
 
-            else:
-                word = "Alberi"
-
-            emb = discord.Embed(description = f"**{trees} {word}** 🎄", colour = self.bot.colour).set_author(name=member.display_name, icon_url=str(member.avatar_url_as(static_format="png")))
+            emb = discord.Embed(description = f"**{trees} {word}** {str(self.bot.get_emoji(234395307759108106))}", colour = self.bot.colour).set_author(name=member.display_name, icon_url=str(member.avatar_url_as(static_format="png")))
             await ctx.send(embed = emb)
 
     @commands.command(aliases=["lb"])
     @is_dbi()
     async def leaderboard(self, ctx):
-        "Chi ha più alberi?"
+        "Chi ha più coppe clown?"
 
         async with ctx.typing():
             data = await self.bot.connection.execute("SELECT * FROM trees")
@@ -193,7 +188,7 @@ class DBI(commands.Cog, command_attrs = dict(hidden = True)):
                     user = None
 
                 if user:
-                    emb.description += f"`{count}.` **{str(user)}** `{stats_[user.id]}`🎄\n"
+                    emb.description += f"`{count}.` **{str(user)}** `{stats_[user.id]}`{str(self.bot.get_emoji(234395307759108106))}\n"
                     count += 1
             await ctx.send(embed = emb)
 
