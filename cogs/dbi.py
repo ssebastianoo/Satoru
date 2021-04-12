@@ -117,7 +117,7 @@ class DBI(commands.Cog, command_attrs = dict(hidden = True)):
             return
 
         def check(reaction, user):
-            return str(reaction.emoji) == emoji and reaction.message.id == message.id and not user.bot
+            return reaction.emoji.id == emoji.id and reaction.message.id == message.id and not user.bot
 
         try:
             reaction, user = await self.bot.wait_for("reaction_add", check=check, timeout=500)
@@ -157,7 +157,7 @@ class DBI(commands.Cog, command_attrs = dict(hidden = True)):
 
             word = "Clown Cup"
 
-            emb = discord.Embed(description = f"**{trees} {word}** {str(self.bot.get_emoji(234395307759108106))}", colour = self.bot.colour).set_author(name=member.display_name, icon_url=str(member.avatar_url_as(static_format="png")))
+            emb = discord.Embed(description = f"**{trees} {word}** {str(self.bot.get_emoji(829083829523972147))}", colour = self.bot.colour).set_author(name=member.display_name, icon_url=str(member.avatar_url_as(static_format="png")))
             await ctx.send(embed = emb)
 
     @commands.command(aliases=["lb"])
@@ -188,7 +188,7 @@ class DBI(commands.Cog, command_attrs = dict(hidden = True)):
                     user = None
 
                 if user:
-                    emb.description += f"`{count}.` **{str(user)}** `{stats_[user.id]}`{str(self.bot.get_emoji(234395307759108106))}\n"
+                    emb.description += f"`{count}.` **{str(user)}** `{stats_[user.id]}`{str(self.bot.get_emoji(829083829523972147))}\n"
                     count += 1
             await ctx.send(embed = emb)
 
