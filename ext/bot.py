@@ -13,6 +13,7 @@ class Bot(commands.Bot):
 
     async def on_ready(self):
         await self.change_presence(status=discord.Status.idle, activity=discord.Activity(type=discord.ActivityType.watching, name="memes"))
-        self.connection = await aiosqlite.connect("data/db.db")
-        await self.connection.execute("CREATE table if not exists trees (user id, trees id)")
+        self.db = await aiosqlite.connect("data/db.db")
+        await self.db.execute("CREATE table if not exists trees (user id, trees id)")
+        await self.db.execute("CREATE table if not exists treesmessages (message id)")
         print("ready as", self.user)

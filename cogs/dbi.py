@@ -2,7 +2,7 @@ import discord, requests, aiohttp, asyncio, random
 from discord.ext import commands
 from ext.checks import *
 
-class DBI(commands.Cog, command_attrs = dict(hidden = True)):
+class DBI(commands.Cog, command_attrs=dict(hidden=True)):
 
     def __init__(self, bot):
         self.bot = bot
@@ -12,6 +12,7 @@ class DBI(commands.Cog, command_attrs = dict(hidden = True)):
         return ctx.guild.id == 611322575674671107
 
     @commands.command()
+    @is_dbi()
     @commands.has_permissions(ban_members = True)
     async def devban(self, ctx, member: discord.Member, *, reason = "Reason not given"):
         "Ban a member from ➥〙developing"
@@ -25,6 +26,7 @@ class DBI(commands.Cog, command_attrs = dict(hidden = True)):
         await ctx.send(embed = emb)
 
     @commands.command()
+    @is_dbi()
     @commands.has_permissions(ban_members = True)
     async def devunban(self, ctx, *, member: discord.Member):
         "Unban a member from ➥〙developing"
@@ -63,7 +65,7 @@ class DBI(commands.Cog, command_attrs = dict(hidden = True)):
                 await message.delete()
                 await ctx.send(f"**{message.author}** https://discord.gg/{invite.code}")
 
-        elif message.channel.id == 743117154932621452:
+        elif message.channel.id == config.dbi.counting:
 
             try:
                 actual = int(message.content)
@@ -90,7 +92,7 @@ class DBI(commands.Cog, command_attrs = dict(hidden = True)):
             else:
                 await message.delete()
 
-        elif message.channel.id == 611325092269522944:
+        elif message.channel.id == config.dbi.memes:
             if message.attachments:
                 await message.add_reaction("👍")
                 await asyncio.sleep(0.2)
@@ -101,16 +103,16 @@ class DBI(commands.Cog, command_attrs = dict(hidden = True)):
                 await asyncio.sleep(0.2)
                 await message.add_reaction("👎")
 
-
-        elif message.channel.id == 821721720619663390:
+        elif message.channel.id == config.dbi.circo:
             await message.publish()
 
-        if message.guild.id != 611322575674671107 or message.author.bot:
+        if message.guild.id != config.dbi.id or message.author.bot:
             return
 
         await self.bot.wait_until_ready()
         emoji = self.bot.get_emoji(829083829523972147)
-        choice = random.choice(range(0, 10))
+        choice = random.choice(range(0, 15))
+
         if choice == 3:
             await message.add_reaction(emoji)
         else:
@@ -126,17 +128,17 @@ class DBI(commands.Cog, command_attrs = dict(hidden = True)):
             return await message.remove_reaction(emoji, message.guild.me)
 
         winner = user.id
-        data = await self.bot.connection.execute("SELECT * FROM trees where user = ?", (winner,))
+        data = await self.bot.db.execute("SELECT * FROM trees WHERE user = ?", (winner,))
         data = await data.fetchall()
 
         if len(data) == 0:
-            await self.bot.connection.execute("INSERT into trees (user, trees) VALUES (?, ?)", (winner, 1))
+            await self.bot.db.execute("INSERT INTO trees (user, trees) VALUES (?, ?)", (winner, 1))
 
         else:
             trees = int(data[0][1]) + 1
-            await self.bot.connection.execute("UPDATE trees set trees = ? where user = ?", (trees, winner))
+            await self.bot.db.execute("UPDATE trees set trees = ? where user = ?", (trees, winner))
 
-        await self.bot.connection.commit()
+        await self.bot.db.commit()
         await message.clear_reaction(emoji)
 
     @commands.command(aliases=["cup", "trofei", "points", "punti"])
@@ -147,7 +149,7 @@ class DBI(commands.Cog, command_attrs = dict(hidden = True)):
         member = member or ctx.author
 
         async with ctx.typing():
-            data = await self.bot.connection.execute("SELECT * FROM trees where user = ?", (member.id,))
+            data = await self.bot.db.execute("SELECT * FROM trees where user = ?", (member.id,))
             data = await data.fetchall()
 
             if len(data) == 0:
@@ -160,7 +162,7 @@ class DBI(commands.Cog, command_attrs = dict(hidden = True)):
             else:
                 word = "Clown Cups"
 
-            emb = discord.Embed(description = f"**{trees} {word}** {str(self.bot.get_emoji(829083829523972147))}", colour = self.bot.colour).set_author(name=member.display_name, icon_url=str(member.avatar_url_as(static_format="png")))
+            emb = discord.Embed(description = f"**{trees} {word}** {str(self.bot.get_emoji(config.dbi.clown_cup))}", colour = self.bot.colour).set_author(name=member.display_name, icon_url=str(member.avatar_url_as(static_format="png")))
             await ctx.send(embed = emb)
 
     @commands.command(aliases=["lb"])
@@ -169,7 +171,7 @@ class DBI(commands.Cog, command_attrs = dict(hidden = True)):
         "Chi ha più coppe clown?"
 
         async with ctx.typing():
-            data = await self.bot.connection.execute("SELECT * FROM trees")
+            data = await self.bot.db.execute("SELECT * FROM trees")
             data = await data.fetchall()
 
             stats_ = {}
@@ -191,7 +193,7 @@ class DBI(commands.Cog, command_attrs = dict(hidden = True)):
                     user = None
 
                 if user:
-                    emb.description += f"`{count}.` **{str(user)}** `{stats_[user.id]}`{str(self.bot.get_emoji(829083829523972147))}\n"
+                    emb.description += f"`{count}.` **{str(user)}** `{stats_[user.id]}`{str(self.bot.get_emoji(config.dbi.clown_cup))}\n"
                     count += 1
             await ctx.send(embed = emb)
 
@@ -204,11 +206,11 @@ class DBI(commands.Cog, command_attrs = dict(hidden = True)):
         except:
             return
 
-        if channel.id == 743117154932621452:
+        if channel.id == config.dbi.counting:
             if message.id == channel.last_message.id:
                 await message.delete()
 
-        elif message.channel.id == 611325092269522944:
+        elif message.channel.id == config.dbi.memes:
             if message.attachments:
                 await message.add_reaction("👍")
                 await message.add_reaction("👎")
@@ -219,18 +221,36 @@ class DBI(commands.Cog, command_attrs = dict(hidden = True)):
 
     @commands.Cog.listener()
     async def on_raw_reaction_add(self, payload):
+
+        if payload.guild_id != config.dbi.id:
+            return
+
         channel = self.bot.get_channel(payload.channel_id)
         message = await channel.fetch_message(payload.message_id)
 
-        if message.channel.id == 611325092269522944:
+        if message.channel.id == config.dbi.memes:
             ups = discord.utils.get(message.reactions, emoji = "👍")
             downs = discord.utils.get(message.reactions, emoji = "👎")
 
-            if ups.count >= downs.count:
-                return
-
-            elif downs.count > ups.count and downs.count > 4:
+            if downs.count > ups.count and downs.count > 4:
                 await message.delete()
+
+        if payload.emoji.id == config.dbi.clown_cup:
+            data = await (await self.bot.db.execute("SELECT message FROM treesmessages WHERE message=?", (message.id,))).fetchone()
+            if data:
+                await self.bot.db.execute("DELETE FROM treesmessages WHERE message=?", (message.id,))
+                data = await self.bot.db.execute("SELECT * FROM trees WHERE user=?", (payload.member.id,))
+                data = await data.fetchone()
+
+                if not data:
+                    await self.bot.db.execute("INSERT INTO trees (user, trees) VALUES (?, ?)", (payload.member.id, 1))
+
+                else:
+                    trees = int(data[0][1]) + 1
+                    await self.bot.db.execute("UPDATE trees set trees=? where user=?", (trees, payload.member.id))
+
+                await self.bot.db.commit()
+                await message.clear_reaction(emoji)
 
 def setup(bot):
     bot.add_cog(DBI(bot))
