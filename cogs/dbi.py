@@ -106,41 +106,6 @@ class DBI(commands.Cog, command_attrs=dict(hidden=True)):
         elif message.channel.id == config.dbi.circo:
             await message.publish()
 
-        if message.guild.id != config.dbi.id or message.author.bot:
-            return
-
-        await self.bot.wait_until_ready()
-        emoji = self.bot.get_emoji(829083829523972147)
-        choice = random.choice(range(0, 15))
-
-        if choice == 3:
-            await message.add_reaction(emoji)
-        else:
-            return
-
-        def check(reaction, user):
-            return reaction.emoji.id == emoji.id and reaction.message.id == message.id and not user.bot
-
-        try:
-            reaction, user = await self.bot.wait_for("reaction_add", check=check, timeout=500)
-
-        except asyncio.TimeoutError:
-            return await message.remove_reaction(emoji, message.guild.me)
-
-        winner = user.id
-        data = await self.bot.db.execute("SELECT * FROM trees WHERE user = ?", (winner,))
-        data = await data.fetchall()
-
-        if len(data) == 0:
-            await self.bot.db.execute("INSERT INTO trees (user, trees) VALUES (?, ?)", (winner, 1))
-
-        else:
-            trees = int(data[0][1]) + 1
-            await self.bot.db.execute("UPDATE trees set trees = ? where user = ?", (trees, winner))
-
-        await self.bot.db.commit()
-        await message.clear_reaction(emoji)
-
     @commands.command(aliases=["cup", "trofei", "points", "punti"])
     @is_dbi()
     async def cups(self, ctx, *, member: discord.Member = None):
